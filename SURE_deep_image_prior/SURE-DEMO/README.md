@@ -19,6 +19,12 @@ Here we provide hyperparameters and architectures, that were used to generate th
 
 We will expand this README with a list of hyperparameters and options shortly.
 
+## New Contribution
+### Error Maps: 
+In ```utils/denoising_utils.py``` a new function called ```calc_error_map``` which accepts two numpy matrices and calculates the error between them. 
+An example is seen here: 
+![Increment by a factor of 5 on the left, and 10 on the right.](https://github.com/gnahum12345/D-AMP_Toolbox/blob/master/SURE_deep_image_prior/SURE-DEMO/data/denoising/snail_error_map.jpg)
+
 # Install
 
 Here is the list of libraries you need to install to execute the code:
