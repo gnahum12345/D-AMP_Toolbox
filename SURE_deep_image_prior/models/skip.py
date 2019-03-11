@@ -77,7 +77,8 @@ def skip(
         else:
             deeper.add(deeper_main)
             k = num_channels_up[i + 1]
-
+        
+        
         deeper.add(nn.Upsample(scale_factor=2, mode=upsample_mode[i]))
 
         model_tmp.add(conv(num_channels_skip[i] + k, num_channels_up[i], filter_size_up[i], 1, bias=need_bias, pad=pad))
