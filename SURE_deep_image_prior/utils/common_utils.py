@@ -59,7 +59,7 @@ def get_image_grid(images_np, nrow=8):
     
     return torch_grid.numpy()
 
-def plot_image_grid(images_np, nrow =8, factor=1, interpolation='lanczos', save=None, name=None):
+def plot_image_grid(images_np, nrow =8, factor=1, interpolation='lanczos', save=None, name=None, vmax=None, vmin=None):
     """Draws images in a grid
     
     Args:
@@ -78,9 +78,27 @@ def plot_image_grid(images_np, nrow =8, factor=1, interpolation='lanczos', save=
     plt.figure(figsize=(len(images_np) + factor, 12 + factor))
     
     if images_np[0].shape[0] == 1:
-        plt.imshow(grid[0], cmap='gray', interpolation=interpolation)
+        if vmax and vmin: 
+            print('i have a vmax 1')
+            plt.imshow(grid[0], cmap='gray', interpolation=interpolation, vmax=vmax,vmin=vmin)
+        elif vmin: 
+            plt.imshow(grid[0], cmap='gray', interpolation=interpolation, vmin=vmin)
+        elif vmax: 
+            plt.imshow(grid[0], cmap='gray', interpolation=interpolation, vmax=vmax)
+        else: 
+            plt.imshow(grid[0], cmap='gray', interpolation=interpolation)
     else:
-        plt.imshow(grid.transpose(1, 2, 0), interpolation=interpolation)
+        if vmax and vmin: 
+            print('i have a vmax 1')
+            plt.imshow(grid.transpose(1, 2, 0), interpolation=interpolation, vmax=vmax,vmin=vmin)
+        elif vmin: 
+            plt.imshow(grid.transpose(1, 2, 0), interpolation=interpolation, vmin=vmin)
+        elif vmax: 
+            plt.imshow(grid.transpose(1, 2, 0), interpolation=interpolation, vmax=vmax)
+        else: 
+            plt.imshow(grid.transpose(1, 2, 0), interpolation=interpolation)
+        
+        
     if name: 
         plt.title(name)
     
