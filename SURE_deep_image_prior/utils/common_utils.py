@@ -78,8 +78,8 @@ def plot_image_grid(images_np, nrow =8, factor=1, interpolation='lanczos', save=
     plt.figure(figsize=(len(images_np) + factor, 12 + factor))
     
     if images_np[0].shape[0] == 1:
-        if vmax and vmin: 
-            print('i have a vmax 1')
+        if vmax is not None and vmin is not None: 
+            print('i have a vmax 10000')
             plt.imshow(grid[0], cmap='gray', interpolation=interpolation, vmax=vmax,vmin=vmin)
         elif vmin: 
             plt.imshow(grid[0], cmap='gray', interpolation=interpolation, vmin=vmin)
@@ -88,8 +88,8 @@ def plot_image_grid(images_np, nrow =8, factor=1, interpolation='lanczos', save=
         else: 
             plt.imshow(grid[0], cmap='gray', interpolation=interpolation)
     else:
-        if vmax and vmin: 
-            print('i have a vmax 1')
+        if vmax is not None and vmin is not None: 
+            print('i have a vmax HHEIHIHEIHE')
             plt.imshow(grid.transpose(1, 2, 0), interpolation=interpolation, vmax=vmax,vmin=vmin)
         elif vmin: 
             plt.imshow(grid.transpose(1, 2, 0), interpolation=interpolation, vmin=vmin)
