@@ -59,7 +59,7 @@ def get_image_grid(images_np, nrow=8):
     
     return torch_grid.numpy()
 
-def show_images(images, cols = 1, titles = None, save= None):
+def show_images(images, cols = 1, titles = None, save= None, exp=1):
     """Display a list of images in a single figure with matplotlib.
     
     Parameters
@@ -78,16 +78,19 @@ def show_images(images, cols = 1, titles = None, save= None):
     fig = plt.figure()
     for n, (image, title) in enumerate(zip(images, titles)):
         a = fig.add_subplot(cols, np.ceil(n_images/float(cols)), n + 1)
+        image = image**exp
         if image.ndim == 2:
             plt.gray()
-        plt.imshow(image, cmap='gray', interpolation='lanczos')
+        x = plt.imshow(image, cmap='gray', interpolation='lanczos')
+        fig.colorbar(x)
         a.set_title(title)
     fig.set_size_inches(np.array(fig.get_size_inches()) * n_images)
-    plt.show()
     if save: 
-        plt.savefig(save)
+        plt.savefig(save, transparent=True)
+        
+    plt.show()
 
-def plot_image_grid(images_np, nrow =8, factor=1, interpolation='lanczos', save=None, name=None, vmax=None, vmin=None):
+def plot_image_grid(images_np, nrow=8, factor=1, interpolation='lanczos', save=None, name=None, vmax=None, vmin=None):
     """Draws images in a grid
     
     Args:
@@ -96,35 +99,49 @@ def plot_image_grid(images_np, nrow =8, factor=1, interpolation='lanczos', save=
         factor: size if the plt.figure 
         interpolation: interpolation used in plt.imshow
     """
+    from mpl_toolkits import axes_grid1
+
+    def add_colorbar(im, aspect=20, pad_fraction=0.5, **kwargs):
+        """Add a vertical color bar to an image plot."""
+        divider = axes_grid1.make_axes_locatable(im.axes)
+        width = axes_grid1.axes_size.AxesY(im.axes, aspect=1./aspect)
+        pad = axes_grid1.axes_size.Fraction(pad_fraction, width)
+        current_ax = plt.gca()
+        cax = divider.append_axes("right", size=width, pad=pad)
+        plt.sca(current_ax)
+        return im.axes.figure.colorbar(im, cax=cax, **kwargs)
+    
     n_channels = max(x.shape[0] for x in images_np)
     assert (n_channels == 3) or (n_channels == 1), "images should have 1 or 3 channels"
     
     images_np = [x if (x.shape[0] == n_channels) else np.concatenate([x, x, x], axis=0) for x in images_np]
-
-    grid = get_image_grid(images_np, nrow)
     
-    plt.figure(figsize=(len(images_np) + factor, 12 + factor))
+    grid = get_image_grid(images_np, nrow)
+    fig = plt.figure(figsize=(len(images_np) + factor, 12 + factor))
+    
+    ax = plt.gca()
+    
     
     if images_np[0].shape[0] == 1:
         if vmax is not None and vmin is not None: 
-            plt.imshow(grid[0], cmap='gray', interpolation=interpolation, vmax=vmax,vmin=vmin)
+            img = ax.imshow(grid[0], cmap='gray', interpolation=interpolation, vmax=vmax,vmin=vmin)
         elif vmin: 
-            plt.imshow(grid[0], cmap='gray', interpolation=interpolation, vmin=vmin)
+            img = ax.imshow(grid[0], cmap='gray', interpolation=interpolation, vmin=vmin)
         elif vmax: 
-            plt.imshow(grid[0], cmap='gray', interpolation=interpolation, vmax=vmax)
+            img = ax.imshow(grid[0], cmap='gray', interpolation=interpolation, vmax=vmax)
         else: 
-            plt.imshow(grid[0], cmap='gray', interpolation=interpolation)
+            img = ax.imshow(grid[0], cmap='gray', interpolation=interpolation)
     else:
         if vmax is not None and vmin is not None: 
-            plt.imshow(grid.transpose(1, 2, 0), interpolation=interpolation, vmax=vmax,vmin=vmin)
+            img = ax.imshow(grid.transpose(1, 2, 0), interpolation=interpolation, vmax=vmax,vmin=vmin)
         elif vmin: 
-            plt.imshow(grid.transpose(1, 2, 0), interpolation=interpolation, vmin=vmin)
+            img = ax.imshow(grid.transpose(1, 2, 0), interpolation=interpolation, vmin=vmin)
         elif vmax: 
-            plt.imshow(grid.transpose(1, 2, 0), interpolation=interpolation, vmax=vmax)
+            img = ax.imshow(grid.transpose(1, 2, 0), interpolation=interpolation, vmax=vmax)
         else: 
-            plt.imshow(grid.transpose(1, 2, 0), interpolation=interpolation)
-        
-        
+            img = ax.imshow(grid.transpose(1, 2, 0), interpolation=interpolation)
+    
+    add_colorbar(img)
     if name: 
         plt.title(name)
     
